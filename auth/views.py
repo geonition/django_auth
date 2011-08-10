@@ -12,7 +12,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseForbidden
 from django.utils import translation
-from geonition_utils.HttpResponseExtenders import HttpResponseNotAuthorized
+from geonition_utils.HttpResponseExtenders import HttpResponseUnauthorized
 from django.contrib.auth.models import User, UserManager
 from django.contrib.sites.models import Site
 from django.template.loader import render_to_string
@@ -86,7 +86,7 @@ def login(request):
             return response
         else:
             logger.info("Wrong username and password: %s / %s " %(username, password))
-            response = HttpResponseNotAuthorized(_(u"Wrong password or username not found"))
+            response = HttpResponseUnauthorized(_(u"Wrong password or username not found"))
             response['Access-Control-Allow-Origin'] = "*"
             return response
     
