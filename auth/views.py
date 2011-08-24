@@ -86,7 +86,7 @@ def login(request):
             return response
         else:
             logger.info("Wrong username and password: %s / %s " %(username, password))
-            response = HttpResponseUnauthorized(_(u"Wrong password or username not found"))
+            response = HttpResponseUnauthorized(u"Wrong password or username not found")
             response['Access-Control-Allow-Origin'] = "*"
             return response
     
