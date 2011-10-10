@@ -2,6 +2,8 @@ from django.contrib.auth import logout as django_logout
 from django.contrib.auth import login as django_login
 from django.contrib.auth import authenticate as django_authenticate
 from django.contrib.auth.models import User
+from django.contrib.auth.models import UserManager
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import BadHeaderError, send_mail
@@ -11,19 +13,15 @@ from django.db.models import Max
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseForbidden
-from django.utils import translation
-from geonition_utils.HttpResponseExtenders import HttpResponseUnauthorized
-from django.contrib.auth.models import User, UserManager
-from django.contrib.sites.models import Site
 from django.template.loader import render_to_string
+from django.utils import translation
+from django.utils import simplejson as json
+from django.views.decorators.csrf import requires_csrf_token
+from geonition_utils.HttpResponseExtenders import HttpResponseUnauthorized
 from threading import Lock
+
 import logging
 import sys
-
-if sys.version_info >= (2, 6):
-    import json
-else:
-    import simplejson as json
 
 logger = logging.getLogger('api.user.view')
 lock = Lock()   
