@@ -14,7 +14,6 @@ from django.http import HttpResponseBadRequest
 from django.http import HttpResponseForbidden
 from django.template.loader import render_to_string
 from django.utils import simplejson as json
-from django.views.decorators.csrf import ensure_csrf_cookie
 from geonition_utils.HttpResponseExtenders import HttpResponseUnauthorized
 from threading import Lock
 
@@ -247,7 +246,6 @@ def register(request):
         return HttpResponse(status=201, content=(u"User was successfully "
                                                  "created"))
         
-
 def session(request):
     """
     This function creates a user with
