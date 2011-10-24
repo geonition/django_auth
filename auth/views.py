@@ -11,6 +11,8 @@ from django.db import transaction
 from django.db.models import Max
 from geonition_utils.HttpResponseExtenders import HttpResponse
 from geonition_utils.HttpResponseExtenders import HttpResponseBadRequest
+from geonition_utils.HttpResponseExtenders import HttpResponseConflict
+from geonition_utils.HttpResponseExtenders import HttpResponseCreated
 from geonition_utils.HttpResponseExtenders import HttpResponseForbidden
 from django.template.loader import render_to_string
 from django.utils import simplejson as json
@@ -77,7 +79,7 @@ def login(request):
         if user is not None:
             django_login(request, user)
             
-            response = HttpResponse(u"Login successfull", status=200)
+            response = HttpResponse(u"Login successfull")
             response['Access-Control-Allow-Origin'] = "*"
             return response
         else:
@@ -204,7 +206,7 @@ def register(request):
             
             logger.error("Username %s provided for register is not unique. "
                          "Details: %s " %(username, details))    
-            return HttpResponse(status=409, content=details)
+            return HttpResponseConflict(details)
 
         try:
             user.full_clean()
@@ -213,7 +215,7 @@ def register(request):
             details = message.join(error_msg)
             
             logger.error("full_clean() generated an error for username %s. "
-                         "Details: %s " %(username, details))
+                         "Details: %s " % (username, details))
             return HttpResponseBadRequest(details)
             
         try:
@@ -232,7 +234,7 @@ def register(request):
             logger.error("Error when trying to save user %s into database. "
                          "Details: %s " %(username, details))
             
-            return HttpResponse(status=409, content=details)
+            return HttpResponseConflict(details)
         
         #authenticate and login
         user = django_authenticate(username=username,
@@ -243,8 +245,7 @@ def register(request):
         
         logger.debug("Registration and login was successfull for "
                      "username %s " %username)
-        return HttpResponse(status=201, content=(u"User was successfully "
-                                                 "created"))
+        return HttpResponseCreated(u"User was successfully created")
         
 def session(request):
     """
@@ -289,7 +290,8 @@ def session(request):
         #release lock
         lock.release()
         
-        user = django_authenticate(username=str(new_user_id), password='passwd')
+        user = django_authenticate(username=str(new_user_id),
+                                   password='passwd')
         
         django_login(request, user)
         user.set_unusable_password()
@@ -307,7 +309,7 @@ def session(request):
             logger.debug("Temp session username %s deleted" %request.user.username) 
             request.user.delete()
         else:
-            logger.debug("User %s has been logged out" %request.user.username) 
+            logger.debug("User %s has been logged out" % request.user.username) 
             django_logout(request)
             
         return HttpResponse(u"session end")
@@ -375,10 +377,7 @@ def new_password(request):
                         
             logger.debug("New password was successfully sent to "
                          "email %s" % current_user.email)
-            return HttpResponse(status=200,
-                                content=(u"New password was sent "
-                                         "to %s" % current_user.email),
-                                mimetype="application/json")
+            return HttpResponse(u"New password was sent to %s" % current_user.email)
             
         except BadHeaderError:
             logger.error("There was an error while trying to send the email "
@@ -433,7 +432,7 @@ def change_password(request):
         if not request.user.check_password(old_password):
             logger.warning("The change password for user %s was called "
                            "with a wrong password" % request.user.username)
-            return HttpResponse(u"Wrong password", status=401)
+            return HttpResponseUnauthorized(u"Wrong password")
         
         if(new_password == None or new_password == ''):
             logger.warning("The change password for user %s was called "
@@ -445,8 +444,7 @@ def change_password(request):
         
         logger.debug("User %s changed password "
                      "successfully" % request.user.username)
-        return HttpResponse(u"Password changed succesfully",
-                                status=200)
+        return HttpResponse(u"Password changed succesfully")
     
     logger.warning("Method %s is not accepted for change_password "
                    "for User %s" % (request.method, request.user.username))
