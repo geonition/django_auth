@@ -9,9 +9,9 @@ from django.core.mail import BadHeaderError, send_mail
 from django.db import IntegrityError
 from django.db import transaction
 from django.db.models import Max
-from django.http import HttpResponse
-from django.http import HttpResponseBadRequest
-from django.http import HttpResponseForbidden
+from geonition_utils.HttpResponseExtenders import HttpResponse
+from geonition_utils.HttpResponseExtenders import HttpResponseBadRequest
+from geonition_utils.HttpResponseExtenders import HttpResponseForbidden
 from django.template.loader import render_to_string
 from django.utils import simplejson as json
 from geonition_utils.HttpResponseExtenders import HttpResponseUnauthorized
