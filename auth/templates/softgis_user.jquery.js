@@ -244,7 +244,7 @@ function new_password(email, callback_function) {
     dataType: "text",
     beforeSend: function(xhr){
       //for cross site authentication using CORS
-     xhr.withCredentials = true;
+      xhr.withCredentials = true;
     }
   });
 }

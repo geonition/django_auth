@@ -266,8 +266,8 @@ def session(request):
         logger.debug("POST was called for session")
         
         if request.user.is_authenticated():
-            logger.warning("POST attempt for session but there is a username "
-                           "%s already logged in" %request.user.username)    
+            logger.warning("POST attempt for session but there a session is "
+                           "%s already created" %request.user.username)    
             return HttpResponse(u"session already created") 
         
         
@@ -294,7 +294,7 @@ def session(request):
         django_login(request, user)
         user.set_unusable_password()
         
-        logger.debug("Session created. Temp session username %s" %user.username)
+        logger.debug("Session created with username %s" % user.username)
         return HttpResponse(u"session created")
 
     elif request.method == "DELETE":
