@@ -128,6 +128,7 @@ function create_session(callback_function) {
       url: api_full_url + '{% url api_session %}',
       type: "POST",
       data: {},
+      async: false,
       success: function(data){
                     if(callback_function !== undefined) {
                         callback_function(data);
