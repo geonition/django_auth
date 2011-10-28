@@ -37,26 +37,19 @@ def login(request):
 
     """
     if(request.method == "GET"):
-        
-        logger.warning("There was a GET request to the url %s which accepts"
-                       "just POST request" % request.get_full_path())
         return HttpResponseBadRequest("This url only accept POST requests")
         
     elif (request.method == "POST"):
         
-        logger.debug("An POST request was sent to login()")
-
         if request.user.is_authenticated() == True:
-            logger.info("There was a login attempt when the user was already "
-                        "authenticated with "
-                        "username %s " % request.user.username)
+        
             return HttpResponseBadRequest("You have already signed in")
             
         values = None
         try:
             values = json.loads(request.POST.keys()[0])
         except ValueError, err:
-            logger.error("Error at login attempt. Details: %s"  % str(err.args))
+        
             return HttpResponseBadRequest("JSON error: " + str(err.args))
         except IndexError:
             return HttpResponseBadRequest("POST data was empty so no login "
@@ -83,8 +76,7 @@ def login(request):
             response['Access-Control-Allow-Origin'] = "*"
             return response
         else:
-            logger.info("Wrong username and password: %s / %s " % (username,
-                                                                   password))
+        
             response = HttpResponseUnauthorized(u"Wrong password or username "
                                                 "not found")
             response['Access-Control-Allow-Origin'] = "*"
@@ -92,8 +84,6 @@ def login(request):
     
     
     elif (request.method == "OPTIONS"):
-        
-        logger.debug("An OPTIONS request was sent to login()")
         
         response = HttpResponse("")
         response['Access-Control-Allow-Origin'] = "*"
@@ -111,8 +101,6 @@ def logout(request):
         200 if logout successful
     """
     django_logout(request)
-    
-    logger.debug("The user successfully logged out %s" % request.user.username)
     
     return HttpResponse("You have successfully signed out")
 
@@ -148,17 +136,13 @@ def register(request):
         409 for Conflict
     """
     if(request.method == "GET"):
-        logger.warning("A GET request was sent to register() but it doesnt' "
-                       "accept GET requests")
+    
         return HttpResponse("")
 
     elif(request.method == "POST"):
         
         #check if anonymous user 
         if request.user.is_authenticated() == True:
-            logger.info("There was a register attempt when the user was "
-                        "already authenticated "
-                        "with username %s " % request.user.username)
             return HttpResponseBadRequest("You cannot register a user "
                                           "when logged in")
     
@@ -167,8 +151,6 @@ def register(request):
         try:
             values = json.loads(request.POST.keys()[0])
         except ValueError, err:
-            logger.error("Error at register attempt. Details: "
-                         "%s"  % str(err.args))
             return HttpResponseBadRequest("JSON error: " + str(err.args))
         except IndexError:
             return HttpResponseBadRequest("POST data was empty so no register "
@@ -181,11 +163,9 @@ def register(request):
         
         
         if(username == None or username == ""):
-            logger.warning("Register attept without providing an username")
             return HttpResponseBadRequest(u"You have to provide a username")
         
         if(password == None or password == ""):
-            logger.warning("Register attept without providing a password")
             return HttpResponseBadRequest(u"You have to provide a password")
         
         #create user for django auth
@@ -203,9 +183,7 @@ def register(request):
                 error_msg.append(err.message_dict[desc][0])
             
             details=message.join(error_msg)
-            
-            logger.error("Username %s provided for register is not unique. "
-                         "Details: %s " %(username, details))    
+    
             return HttpResponseConflict(details)
 
         try:
@@ -214,8 +192,6 @@ def register(request):
             message = " "
             details = message.join(error_msg)
             
-            logger.error("full_clean() generated an error for username %s. "
-                         "Details: %s " % (username, details))
             return HttpResponseBadRequest(details)
             
         try:
@@ -230,9 +206,8 @@ def register(request):
 
             for desc in err.message_dict.keys():
                 error_msg.append(err.message_dict[desc][0])
+    
             details = message.join(error_msg)
-            logger.error("Error when trying to save user %s into database. "
-                         "Details: %s " %(username, details))
             
             return HttpResponseConflict(details)
         
@@ -243,8 +218,6 @@ def register(request):
         if user is not None and user.is_active:
             django_login(request, user)
         
-        logger.debug("Registration and login was successfull for "
-                     "username %s " %username)
         return HttpResponseCreated(u"User was successfully created")
         
 def session(request):
