@@ -17,7 +17,9 @@ from geonition_utils.HttpResponseExtenders import HttpResponseForbidden
 from django.template.loader import render_to_string
 from django.utils import simplejson as json
 from geonition_utils.HttpResponseExtenders import HttpResponseUnauthorized
+from random import random
 from threading import Lock
+from time import time
 
 import logging
 
@@ -232,44 +234,24 @@ def session(request):
     DELETE request ends the session
     """
     if request.method == "GET":
-        logger.debug("GET was called for current session. Session key "
-                     "returned: %s" %request.session.session_key)
         return HttpResponse(request.session.session_key)
         
     elif request.method == "POST":
-        logger.debug("POST was called for session")
-        
-        if request.user.is_authenticated():
-            logger.warning("POST attempt for session but there a session is "
-                           "%s already created" %request.user.username)    
+    
+        if request.user.is_authenticated():   
             return HttpResponse(u"session already created") 
         
         
-        #put lock to create critical section
-        lock.acquire() 
-        try:
-            new_user_id = User.objects.aggregate(Max('id'))
-    
-            if(new_user_id['id__max'] == None):
-                new_user_id['id__max'] = 1
-            else:
-                new_user_id['id__max'] = new_user_id['id__max'] + 1
-            
-            User.objects.create_user(str(new_user_id),'', 'passwd')
-        except Exception, e:
-            logger.error("Error in the section critical of session creation. "
-                         "Details: %s" %e)
-
-        #release lock
-        lock.release()
+        #should be unique enough and 27 char long
+        new_user_id = "T%fR%f" % (time(), random())            
+        User.objects.create_user(new_user_id,'', 'passwd')
         
-        user = django_authenticate(username=str(new_user_id),
+        user = django_authenticate(username=new_user_id,
                                    password='passwd')
         
         django_login(request, user)
         user.set_unusable_password()
         
-        logger.debug("Session created with username %s" % user.username)
         return HttpResponse(u"session created")
 
     elif request.method == "DELETE":

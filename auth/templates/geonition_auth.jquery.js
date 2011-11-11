@@ -27,14 +27,14 @@ gnt.auth.register =
             url: gnt.config.api_full_url + '{% url api_register %}',
             type: "POST",
             data: JSON.stringify(data),
-            success: function(data){
+            success: function(data, textStatus, jqXHR){
                 if(callback_function !== undefined) {
-                    callback_function(data);
+                    callback_function(data, textStatus, jqXHR);
                     }
             },
-            error: function(e) {
+            error: function(jqXHR, textStatus, errorThrown) {
                 if(callback_function !== undefined) {
-                    callback_function(e);
+                    callback_function(jqXHR, textStatus, errorThrown);
                     }
                 },
             dataType: "json",
@@ -71,14 +71,14 @@ function(username, password, callback_function) {
       type: "POST",
       data: JSON.stringify(data),
       contentType: "application/json",
-      success: function(data){
+      success: function(data, textStatus, jqXHR){
                     if(callback_function !== undefined) {
-                        callback_function(data);
+                        callback_function(data, textStatus, jqXHR);
                     }
         },
-      error: function(e) {
+      error: function(jqXHR, textStatus, errorThrown) {
                     if(callback_function !== undefined) {
-                        callback_function(e);    
+                        callback_function(jqXHR, textStatus, errorThrown);    
                     }
       }, 
       dataType: "json",
@@ -107,15 +107,16 @@ function(callback_function) {
       url: gnt.config.api_full_url + '{% url api_logout %}',
       type: "GET",
       data: {},
-      success: function(data){
-                    if(callback_function !== undefined) {
-                        callback_function(data);
-                    }
+      async: false,
+      success: function(data, textStatus, jqXHR){
+            if(callback_function !== undefined) {
+                callback_function(data, textStatus, jqXHR);
+            }
         },
-      error: function(e) {
-                    if(callback_function !== undefined) {
-                        callback_function(e);    
-                    }
+      error: function(jqXHR, textStatus, errorThrown) {
+            if(callback_function !== undefined) {
+                callback_function(jqXHR, textStatus, errorThrown);    
+            }
       }, 
       dataType: "json"
 
@@ -136,14 +137,14 @@ gnt.auth.create_session =
             type: "POST",
             data: {},
             async: false,
-            success: function(data){
+            success: function(data, textStatus, jqXHR){
                 if(callback_function !== undefined) {
-                    callback_function(data);
+                    callback_function(data, textStatus, jqXHR);
                 }
             },
-            error: function(e) {
+            error: function(jqXHR, textStatus, errorThrown) {
                 if(callback_function !== undefined) {
-                    callback_function(e);
+                    callback_function(jqXHR, textStatus, errorThrown);
                 }
             },
             dataType: "text",
@@ -164,14 +165,14 @@ function(callback_function) {
       url: gnt.config.api_full_url + '{% url api_session %}',
       type: "DELETE",
       data: {},
-      success: function(data){
+      success: function(data, textStatus, jqXHR){
                     if(callback_function !== undefined) {
-                        callback_function(data);
+                        callback_function(data, textStatus, jqXHR);
                     }
         },
-      error: function(e) {
+      error: function(jqXHR, textStatus, errorThrown) {
                     if(callback_function !== undefined) {
-                        callback_function(e);    
+                        callback_function(jqXHR, textStatus, errorThrown);    
                     }
       }, 
       dataType: "text",
@@ -193,14 +194,14 @@ function(callback_function) {
       url: gnt.config.api_full_url + '{% url api_session %}',
       type: "GET",
       data: {},
-      success: function(data){
+      success: function(data, textStatus, jqXHR){
                     if(callback_function !== undefined) {
-                        callback_function(data);
+                        callback_function(data, textStatus, jqXHR);
                     }
         },
-      error: function(e) {
+      error: function(jqXHR, textStatus, errorThrown) {
                     if(callback_function !== undefined) {
-                        callback_function(e);    
+                        callback_function(jqXHR, textStatus, errorThrown);    
                     }
       }, 
       dataType: "text",
@@ -238,15 +239,14 @@ function(email, callback_function) {
     url: gnt.config.api_full_url + '{% url api_new_password %}',
     type: "POST",
     data: JSON.stringify(data),
-    success: function(data){
+    success: function(data, textStatus, jqXHR){
                   if(callback_function !== undefined) {
-                      console.debug(data);
-                      callback_function(data);
+                      callback_function(data, textStatus, jqXHR);
                   }
       },
-    error: function(e) {
+    error: function(jqXHR, textStatus, errorThrown) {
                   if(callback_function !== undefined) {
-                      callback_function(e);    
+                      callback_function(jqXHR, textStatus, errorThrown);    
                   }
     }, 
     dataType: "text",
@@ -278,14 +278,14 @@ function(old_password, new_password, callback_function) {
         url: gnt.config.api_full_url + '{% url api_change_password %}',
         type: "POST",
         data: JSON.stringify(data),
-        success: function(data){
+        success: function(data, textStatus, jqXHR){
+            if(callback_function !== undefined) {
+                callback_function(data, textStatus, jqXHR);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
                       if(callback_function !== undefined) {
-                          callback_function(data);
-                      }
-          },
-        error: function(e) {
-                      if(callback_function !== undefined) {
-                          callback_function(e);    
+                          callback_function(jqXHR, textStatus, errorThrown);    
                       }
         }, 
         dataType: "text",
