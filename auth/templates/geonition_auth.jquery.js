@@ -70,6 +70,7 @@ function(username, password, callback_function) {
       url: gnt.config.api_full_url + '{% url api_login %}',
       type: "POST",
       data: JSON.stringify(data),
+      async: false,
       contentType: "application/json",
       success: function(data, textStatus, jqXHR){
                     if(callback_function !== undefined) {
@@ -165,6 +166,7 @@ function(callback_function) {
       url: gnt.config.api_full_url + '{% url api_session %}',
       type: "DELETE",
       data: {},
+      async: false,
       success: function(data, textStatus, jqXHR){
                     if(callback_function !== undefined) {
                         callback_function(data, textStatus, jqXHR);
