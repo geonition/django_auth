@@ -4,14 +4,8 @@ from django.test.client import Client
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.core import mail
+from django.utils import simplejson as json
 
-import sys
-
-if sys.version_info >= (2, 6):
-    import json
-else:
-    import simplejson as json
-    
       
 class AuthenticationTest(TestCase):
     
@@ -62,7 +56,7 @@ class AuthenticationTest(TestCase):
         self.assertEquals(response.status_code, 409)
         
         #test registering with username äöå
-        post_content = {'username': u'ånänön', 'password': u'åäö'}
+        post_content = {'username': u'ånänön', 'password': u'åäöåäöåäöåäö'}
         response = self.client.post(reverse('api_register'),
                                     json.dumps(post_content),
                                     content_type='application/json')
@@ -179,7 +173,7 @@ class AuthenticationTest(TestCase):
         
         post_content = {'username':'testuser', 'password':'testpass'}
         response = self.client.post(reverse('api_register'),
-                                    json.dumps(post_content), \
+                                    json.dumps(post_content),
                                     content_type='application/json')
         self.assertEquals(response.status_code,
                           201,
@@ -196,7 +190,7 @@ class AuthenticationTest(TestCase):
         post_content = {"email" : "test@aalto.fi"}
             
         response = self.client.post(reverse('api_new_password'),
-                            json.dumps(post_content), \
+                            json.dumps(post_content),
                             content_type='application/json')
         
         #Test if confirmation email is sent
@@ -205,3 +199,35 @@ class AuthenticationTest(TestCase):
         
         passwd = user.password
         self.assertNotEqual(passwd,"testpass", "New password hasn't been saved")
+
+    def test_change_passwd(self):
+        
+        #i guess django is not running this test
+        #change passowrd for user åäö
+        self.client.login(username = u'åäö', password = u'åäö')
+        
+        post_content = {'old_password':'åäö', 'new_password':'betterpass'}
+        response = self.client.post(reverse('api_change_password'),
+                                    json.dumps(post_content),
+                                    content_type='application/json')
+        
+        
+        self.assertEquals(response.status_code,
+                          200,
+                          "The valid password was not changed")
+        
+        #login the user again
+        self.client.login(username = u'åäö', password = u'betterpass')
+        
+        post_content = {'old_password':'betterpass', 'new_password':'short'}
+        response = self.client.post(reverse('api_change_password'),
+                                    json.dumps(post_content),
+                                    content_type='application/json')
+        
+        
+        self.assertEquals(response.status_code,
+                          400,
+                          "The invalid password was changed")
+        
+        
+        

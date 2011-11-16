@@ -164,12 +164,17 @@ def register(request):
         username = values.pop('username', None)
         password = values.pop('password', None)
         
-        
         if(username == None or username == ""):
             return HttpResponseBadRequest(u"You have to provide a username")
         
         if(password == None or password == ""):
             return HttpResponseBadRequest(u"You have to provide a password")
+            
+        #validate password
+        val_passwd_result = validate_password(password)
+        if not val_passwd_result[0]:
+            return HttpResponseBadRequest(val_passwd_result[1])
+        
         
         #create user for django auth
         user = User(username = username,
@@ -322,13 +327,10 @@ def new_password(request):
             current_user.set_password(password)
             current_user.save()
                         
-            logger.debug("New password was successfully sent to "
-                         "email %s" % current_user.email)
             return HttpResponse(u"New password was sent to %s" % current_user.email)
             
         except BadHeaderError:
-            logger.error("There was an error while trying to send the email "
-                         "with the new password")
+            
             return HttpResponseBadRequest(u'Invalid header found.')
             
 
@@ -347,10 +349,8 @@ def change_password(request):
     """
     
     if not request.user.is_authenticated():
-        logger.warning("The change password was called by an "
-                       "unauthenticated user")
         return HttpResponseForbidden(u"The request has to be made by "
-                                     "an signed in user")
+                                     "a signed in user")
 
 
     if(request.method == "POST"):
@@ -358,43 +358,41 @@ def change_password(request):
         try: 
             request_json = json.loads(request.POST.keys()[0])
         except ValueError, err:
-            logger.error("Error at change_password request. "
-                         "Details: %s"  % str(err.args))
-            return HttpResponseBadRequest("JSON error: " + str(err.args))
+            return HttpResponseBadRequest(u"JSON error: %s" % str(err.args))
         except IndexError:
             return HttpResponseBadRequest("POST data was empty so no "
                                           "change_password value could be "
-                                          "retrieven from it")
-    
-        
+                                          "retrieved from it")
+            
         new_password = request_json['new_password']
         old_password = request_json['old_password']
 
         if(old_password == None or old_password == ''):
-            logger.warning("The change password for user %s was called "
-                           "without a current password" % request.user.username)
             return HttpResponseBadRequest(u"You have to enter your"
                                           "current password")
 
         if not request.user.check_password(old_password):
-            logger.warning("The change password for user %s was called "
-                           "with a wrong password" % request.user.username)
             return HttpResponseUnauthorized(u"Wrong password")
         
         if(new_password == None or new_password == ''):
-            logger.warning("The change password for user %s was called "
-                           "without a new password" % request.user.username)
             return HttpResponseBadRequest(u"You have to provide a password")
         
-        request.user.set_password(new_password)
-        request.user.save()
+        passwd_val_result = validate_password(new_password)
         
-        logger.debug("User %s changed password "
-                     "successfully" % request.user.username)
-        return HttpResponse(u"Password changed succesfully")
+        if passwd_val_result[0]:
+            request.user.set_password(new_password)
+            request.user.save()
+        
+            return HttpResponse(u"Password changed succesfully")
+        else:
+            return HttpResponseBadRequest(passwd_val_result[1])
     
-    logger.warning("Method %s is not accepted for change_password "
-                   "for User %s" % (request.method, request.user.username))
     return HttpResponseBadRequest(u"This URL only accepts POST requests")   
 
-
+def validate_password(password):
+    
+    #require the password to be certain length
+    if len(password) < 8:
+        return (False, u'The password has to be at least 8 characters long')
+    
+    return (True, u'The password is strong enough')
