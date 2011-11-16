@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import login as django_login
 from django.contrib.auth import authenticate as django_authenticate
@@ -256,16 +257,7 @@ def session(request):
 
     elif request.method == "DELETE":
         
-        logger.debug("Delete session was called")
-        
-        # check if it is an session anonymous user - delete it
-        # otherwise just logout
-        if request.user.is_authenticated() and request.user.username.find("id__max") > -1:
-            logger.debug("Temp session username %s deleted" %request.user.username) 
-            request.user.delete()
-        else:
-            logger.debug("User %s has been logged out" % request.user.username) 
-            django_logout(request)
+        django_logout(request)
             
         return HttpResponse(u"session end")
         

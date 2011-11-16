@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.test import TestCase
 from django.test.client import Client
 from django.core.urlresolvers import reverse
@@ -16,6 +17,8 @@ class AuthenticationTest(TestCase):
     
     def setUp(self):
         self.client = Client()
+        
+        User.objects.create_user(u'åäö', '', u'åäö')
 
         
     def test_registration(self):
@@ -57,6 +60,13 @@ class AuthenticationTest(TestCase):
                                     json.dumps(post_content),
                                     content_type='application/json')
         self.assertEquals(response.status_code, 409)
+        
+        #test registering with username äöå
+        post_content = {'username': u'ånänön', 'password': u'åäö'}
+        response = self.client.post(reverse('api_register'),
+                                    json.dumps(post_content),
+                                    content_type='application/json')
+        self.assertEquals(response.status_code, 201)
 
     def test_login(self):
         """
@@ -99,6 +109,17 @@ class AuthenticationTest(TestCase):
         self.assertEquals(response.status_code,
                           200,
                           'login with valid username and password did not work')
+        
+        #test login with username including swedish characters åöä
+        self.client.logout()
+        post_content = {'username': u'åäö', 'password': u'åäö'}
+        response = self.client.post(reverse('api_login'),
+                                    json.dumps(post_content), 
+                                    content_type='application/json')
+        self.assertEquals(response.status_code,
+                          200,
+                          'login with valid username and password did not work')
+        
         
     def test_session(self):
         """
