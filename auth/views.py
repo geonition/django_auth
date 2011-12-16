@@ -317,7 +317,7 @@ def new_password(request):
             current_user.set_password(password)
             current_user.save()
                         
-            return HttpResponse(u"New password was sent to %s" % current_user.email)
+            return HttpResponse(u"New password was sent")
             
         except BadHeaderError:
             
