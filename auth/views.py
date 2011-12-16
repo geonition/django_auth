@@ -281,26 +281,16 @@ def new_password(request):
     if(request.method == "POST"):
         try:
             request_json = json.loads(request.POST.keys()[0])
-        except ValueError, err:
-            logger.error("Error at new_password request. "
-                         "Details: %s"  % str(err.args))
-            return HttpResponseBadRequest("JSON error: " + str(err.args))
+        except ValueError:
+            return HttpResponseBadRequest("The post request was not valid JSON")
         except IndexError:
             return HttpResponseBadRequest("POST data was empty so no "
                                           "new_password value could be "
-                                          "retrieven from it")
+                                          "retrieved from it")
         
         email = request_json['email']
-        try:
-            current_user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            logger.warning("The user could not be found or the email address "
-                           "hasn't been confirmed")
-            return HttpResponseBadRequest(u"The user could not be found or "
-                                          "the email address hasn't been "
-                                          "confirmed") 
+        current_user = User.objects.filter(email=email)[0]
         
-       
         um = UserManager()
         password = um.make_random_password()
         
