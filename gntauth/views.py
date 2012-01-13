@@ -240,7 +240,7 @@ def session(request):
     DELETE request ends the session
     """
     if request.method == "GET":
-        return HttpResponse(request.session.session_key)
+        return HttpResponse(unicode(request.session.session_key))
         
     elif request.method == "POST":
     

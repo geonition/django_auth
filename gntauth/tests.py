@@ -184,21 +184,6 @@ class AuthenticationTest(TestCase):
         user = User.objects.get(username = "testuser")
         user.email = "test@aalto.fi"
         user.save()
-        
-        #confirm the email
-
-        post_content = {"email" : "test@aalto.fi"}
-            
-        response = self.client.post(reverse('api_new_password'),
-                            json.dumps(post_content),
-                            content_type='application/json')
-        
-        #Test if confirmation email is sent
-        self.assertEquals(len(mail.outbox), 1, "New password not sent")
-        
-        
-        passwd = user.password
-        self.assertNotEqual(passwd,"testpass", "New password hasn't been saved")
 
     def test_change_passwd(self):
         
@@ -219,14 +204,13 @@ class AuthenticationTest(TestCase):
         #login the user again
         self.client.login(username = u'åäö', password = u'betterpass')
         
-        post_content = {'old_password':'betterpass', 'new_password':'short'}
+        post_content = {'old_password':'betterpas', 'new_password':'short'}
         response = self.client.post(reverse('api_change_password'),
                                     json.dumps(post_content),
                                     content_type='application/json')
         
-        
         self.assertEquals(response.status_code,
-                          400,
+                          401,
                           "The invalid password was changed")
         
         

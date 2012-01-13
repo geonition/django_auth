@@ -2,7 +2,7 @@
 from django.conf.urls.defaults import patterns
 from django.conf.urls.defaults import url
 
-urlpatterns = patterns('auth.views',
+urlpatterns = patterns('gntauth.views',
             url(r'^register/$',
                 'register',
                 name="api_register"),
