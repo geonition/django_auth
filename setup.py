@@ -9,9 +9,8 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     package_data = {
-        "auth": [
-            "templates/*.js",
-            "templates/email_templates/*.txt"
+        "gntauth": [
+            "templates/*.js"
         ],
     },
     zip_safe=False,
