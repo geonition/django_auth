@@ -3,7 +3,7 @@ from setuptools import find_packages
 
 setup(
     name='gntauth',
-    version='4.0.1',
+    version='4.1.0',
     author='Kristoffer Snabb',
     url='https://github.com/geonition/django_auth',
     packages=find_packages(),
