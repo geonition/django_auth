@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls.defaults import patterns
-from django.conf.urls.defaults import url
+from django.conf.urls import patterns
+from django.conf.urls import url
 
 urlpatterns = patterns('gntauth.views',
             url(r'^register/$',

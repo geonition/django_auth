@@ -1,3 +1,4 @@
+{% load url from future %}
 /*
  authentication related functions
 */
@@ -24,7 +25,7 @@ gnt.auth.register =
         //add_CSRF_token_in_request_header();
 
         $.ajax({
-            url: gnt.config.api_full_url + '{% url api_register %}',
+            url: gnt.config.api_full_url + '{% url 'api_register' %}',
             type: "POST",
             data: JSON.stringify(data),
             success: function(data, textStatus, jqXHR){
@@ -67,7 +68,7 @@ function(username, password, callback_function) {
     //add_CSRF_token_in_request_header();
 
     $.ajax({
-      url: gnt.config.api_full_url + '{% url api_login %}',
+      url: gnt.config.api_full_url + '{% url 'api_login' %}',
       type: "POST",
       data: JSON.stringify(data),
       async: false,
@@ -105,7 +106,7 @@ gnt.auth.logout =
 function(callback_function) {
 
     $.ajax({
-      url: gnt.config.api_full_url + '{% url api_logout %}',
+      url: gnt.config.api_full_url + '{% url 'api_logout' %}',
       type: "GET",
       data: {},
       async: false,
@@ -133,7 +134,7 @@ profile values to other softgis apps.
 gnt.auth.create_session =
     function(callback_function) {
         $.ajax({
-            url: gnt.config.api_full_url + '{% url api_session %}',
+            url: gnt.config.api_full_url + '{% url 'api_session' %}',
             type: "POST",
             data: {},
             async: false,
@@ -162,7 +163,7 @@ gnt.auth.delete_session =
 function(callback_function) {
 
     $.ajax({
-      url: gnt.config.api_full_url + '{% url api_session %}',
+      url: gnt.config.api_full_url + '{% url 'api_session' %}',
       type: "DELETE",
       data: {},
       async: false,
@@ -192,7 +193,7 @@ gnt.auth.get_session =
 function(callback_function) {
 
       $.ajax({
-      url: gnt.config.api_full_url + '{% url api_session %}',
+      url: gnt.config.api_full_url + '{% url 'api_session' %}',
       type: "GET",
       data: {},
       success: function(data, textStatus, jqXHR){
@@ -237,7 +238,7 @@ function(email, callback_function) {
 
 
     $.ajax({
-    url: gnt.config.api_full_url + '{% url api_new_password %}',
+    url: gnt.config.api_full_url + '{% url 'api_new_password' %}',
     type: "POST",
     data: JSON.stringify(data),
     success: function(data, textStatus, jqXHR){
@@ -276,7 +277,7 @@ function(old_password, new_password, callback_function) {
 
 
     $.ajax({
-        url: gnt.config.api_full_url + '{% url api_change_password %}',
+        url: gnt.config.api_full_url + '{% url 'api_change_password' %}',
         type: "POST",
         data: JSON.stringify(data),
         success: function(data, textStatus, jqXHR){
