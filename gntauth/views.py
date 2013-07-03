@@ -50,7 +50,7 @@ def login(request):
 
         values = None
         try:
-            values = json.loads(request.POST.keys()[0])
+            values = json.loads(request.body)
         except ValueError, err:
 
             return HttpResponseBadRequest("JSON error: " + str(err.args))
@@ -152,7 +152,7 @@ def register(request):
 
         values = None
         try:
-            values = json.loads(request.POST.keys()[0])
+            values = json.loads(request.body)
         except ValueError, err:
             return HttpResponseBadRequest("JSON error: " + str(err.args))
         except IndexError:
@@ -281,7 +281,7 @@ def new_password(request):
 
     if(request.method == "POST"):
         try:
-            request_json = json.loads(request.POST.keys()[0])
+            request_json = json.loads(request.body)
         except ValueError:
             return HttpResponseBadRequest("The post request was not valid JSON")
         except IndexError:
