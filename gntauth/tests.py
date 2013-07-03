@@ -204,8 +204,7 @@ class AuthenticationTest(TestCase):
         response = self.client.post(reverse('api_change_password'),
                                     json.dumps(post_content),
                                     content_type='application/json')
-        
-        
+
         self.assertEquals(response.status_code,
                           200,
                           "The valid password was not changed")

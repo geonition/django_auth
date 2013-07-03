@@ -347,7 +347,7 @@ def change_password(request):
     if(request.method == "POST"):
 
         try:
-            request_json = json.loads(request.POST.keys()[0])
+            request_json = json.loads(request.body)
         except ValueError, err:
             return HttpResponseBadRequest(u"JSON error: %s" % str(err.args))
         except IndexError:
