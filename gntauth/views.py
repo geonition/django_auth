@@ -228,6 +228,19 @@ def register(request):
 
         return HttpResponseCreated(u"User was successfully created")
 
+def create_anonymous_user(request):
+    #should be unique enough and 27 char long
+    new_user_id = "T%fR%f" % (time(), random())
+    User.objects.create_user(new_user_id,'', 'passwd')
+
+    user = django_authenticate(username=new_user_id,
+                                password='passwd')
+
+    django_login(request, user)
+    user.set_unusable_password()
+    user.save()
+    return user
+
 def session(request):
     """
     This function creates a user with
@@ -247,17 +260,7 @@ def session(request):
         if request.user.is_authenticated():
             return HttpResponse(u"session already created")
 
-
-        #should be unique enough and 27 char long
-        new_user_id = "T%fR%f" % (time(), random())
-        User.objects.create_user(new_user_id,'', 'passwd')
-
-        user = django_authenticate(username=new_user_id,
-                                   password='passwd')
-
-        django_login(request, user)
-        user.set_unusable_password()
-        user.save()
+        create_anonymous_user(request)
 
         return HttpResponse(u"session created")
 
